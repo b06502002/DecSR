@@ -4,9 +4,8 @@ import matplotlib
 import cv2
 np.random.seed(1234321)
 ## This file mainly checks 
-    # 1. the functionality for the size parameter
-    # 2. the effect of distorted position
-
+    # 1. The intensity
+    # 2. 
 
 def uniform_proposal(x, y=0, delta=2.0):
     return np.random.uniform([x-delta,y-delta], [x+delta, y+delta],size=(1,2))
@@ -36,7 +35,7 @@ def size_module(beta, f):
 
 # basic parameter section
 b = 3.419 # beta in the base profile
-FWHM = 1
+FWHM = 4
 R50 = size_module(b, FWHM)
 p = lambda x, y: Moffat(x, y, setAlpha(b, R50), b, 1)
 samples = list(metropolis_sampler(p, 100000))
@@ -48,9 +47,13 @@ unzipped_sample = list(unzipped_object)
 
 w = np.ones(100000)*0.00001 #weights vector
 img = np.histogram2d(unzipped_sample[0], unzipped_sample[1], bins=[15,15], range=[[-7.5,7.5], [-7.5,7.5]], normed=None, weights=w, density=None)[0]
-
-cv2.imshow('do not click x', img*255)
+img -= img.min()
+img /= img.max()
+img *= 255
+cv2.imshow('do not click x', img.astype(np.uint8))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 print(img[5:10,5:10])
+
+# cv2.imshow('do not click x', 100+(img*255).astype(np.uint8))
 
