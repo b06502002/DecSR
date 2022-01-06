@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
 # ref: https://stackoverflow.com/questions/51050658/how-to-generate-random-numbers-with-predefined-probability-distribution
 
@@ -31,6 +32,7 @@ p = lambda x, y: Moffat(x, y, setAlpha(b, 2), b)
 samples = list(metropolis_sampler(p, 100000))
 unzipped_object = zip(*samples)
 unzipped_sample = list(unzipped_object)
-plt.hist2d(unzipped_sample[0], unzipped_sample[1], bins=(50, 50), range=[[-16,16], [-16,16]], cmap=plt.cm.Greys)
+
+plt.hist2d(unzipped_sample[0], unzipped_sample[1], bins=(50, 50), range=[[-16,16], [-16,16]], cmap=plt.cm.Greys, norm = matplotlib.colors.Normalize(0,10000))
 plt.colorbar()
 plt.show()
