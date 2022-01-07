@@ -4,7 +4,7 @@ import matplotlib
 import cv2
 np.random.seed(1234321)
 ## This file mainly checks 
-    # 1. The intensity
+    # 1. The intensity of image (contrast)
     # 2. 
 
 def uniform_proposal(x, y=0, delta=2.0):
@@ -18,7 +18,7 @@ def metropolis_sampler(p, nsamples, proposal=uniform_proposal):
         if np.random.uniform() < acceptance:
             x = trial[0][0]
             y = trial[0][1]
-        yield x, y
+        yield np.array((x,y))
 
 def setAlpha(beta, r50):
     """
@@ -35,12 +35,11 @@ def size_module(beta, f):
 
 # basic parameter section
 b = 3.419 # beta in the base profile
-FWHM = 4
+FWHM = 1.5
 R50 = size_module(b, FWHM)
 p = lambda x, y: Moffat(x, y, setAlpha(b, R50), b, 1)
 samples = list(metropolis_sampler(p, 100000))
-samples[0] = tuple(elem*R50 for elem in samples[0])
-samples[1] = tuple(elem*R50 for elem in samples[1])
+samples = list(np.inner(elem,R50*np.identity(2)) for elem in samples)
 
 unzipped_object = zip(*samples)
 unzipped_sample = list(unzipped_object)

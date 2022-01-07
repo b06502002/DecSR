@@ -3,10 +3,8 @@ import matplotlib.pyplot as plt
 import matplotlib
 import cv2
 np.random.seed(1234321)
-## This file mainly checks 
-    # 1. the functionality for the size parameter
-    # 2. the effect of distorted position
-
+## This script mainly checks 
+    # 1. the skewness (Flexion)
 
 def uniform_proposal(x, y=0, delta=2.0):
     return np.random.uniform([x-delta,y-delta], [x+delta, y+delta],size=(1,2))
@@ -34,21 +32,42 @@ def Moffat(x, y, alpha, beta, I0):
 def size_module(beta, f):
     return f*(np.sqrt(2**(1/(beta-1))-1)/(2*np.sqrt(2**(1/beta)-1)))
 
+def ellip_module(e1, e2):
+    ABSe = np.sqrt(e1**2+e2**2) # see also numpy.linalg.norm
+    if ABSe == 0:
+        return np.identity(2)
+    else:
+        return 1/np.sqrt(2)*np.array([[ np.sign(e2)*np.sqrt((1+ABSe)*(1+e1/ABSe)), -np.sqrt((1-ABSe)*(1-e1/ABSe))], 
+                                      [ np.sqrt((1+ABSe)*(1-e1/ABSe)), np.sign(e2)*np.sqrt((1-ABSe)*(1+e1/ABSe)) ]])
+
+def flex_module(f1, f2, g1, g2):
+    """f1 and f2 sccount for the skewness of the PSF
+    while g1 and g2 accout for the triangularity"""
+    F1 = -0.5*np.array([[3*f1,f2], [f2,f1]])
+    F2 = -0.5*np.array([[f2,f1], [f1,3*f2]])
+    G1 = -0.5*np.array([[g1,g2], [g2,-g1]])
+    G2 = -0.5*np.array([[g2,-g1], [-g1,-g2]])
+    return F1+G1, F2+G2
+
 # basic parameter section
 b = 3.419 # beta in the base profile
-FWHM = 1
-R50 = np.identity(2)*(size_module(b, FWHM))
-p = lambda x, y: Moffat(x, y, setAlpha(b, R50[0][0]), b, 1)
+FWHM = 3
+R50 = size_module(b, FWHM)
+A = ellip_module(0,0.4)
+D1, D2 = flex_module(1,1,2,3)
+p = lambda x, y: Moffat(x, y, setAlpha(b, R50), b, 1)
 samples = list(metropolis_sampler(p, 100000))
-samples = list(np.inner(elem,R50) for elem in samples)
-
+samples = list( np.matmul(A,np.inner(elem,R50)) + np.matmul(elem[0]*D1,elem)+np.matmul(elem[1]*D2,elem) for elem in samples )
+print(samples[1])
 unzipped_object = zip(*samples)
 unzipped_sample = list(unzipped_object)
 
 w = np.ones(100000)*0.00001 #weights vector
 img = np.histogram2d(unzipped_sample[0], unzipped_sample[1], bins=[15,15], range=[[-7.5,7.5], [-7.5,7.5]], normed=None, weights=w, density=None)[0]
-
-cv2.imshow('do not click x', img*255)
+img -= img.min()
+img /= img.max()
+img *= 255
+cv2.imshow('do not click x', img.astype(np.uint8))
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 print(img[5:10,5:10])
