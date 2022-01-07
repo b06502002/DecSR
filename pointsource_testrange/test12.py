@@ -4,7 +4,7 @@ import matplotlib
 import cv2
 np.random.seed(1234321)
 ## This script mainly checks 
-    # 1. the skewness and triangularity (Flexion)
+    # 1. kurtosis
 
 def uniform_proposal(x, y=0, delta=2.0):
     return np.random.uniform([x-delta,y-delta], [x+delta, y+delta],size=(1,2))
@@ -49,15 +49,18 @@ def flex_module(f1, f2, g1, g2):
     G2 = -0.5*np.array([[g2,-g1], [-g1,-g2]])
     return F1+G1, F2+G2
 
+
 # basic parameter section
 b = 3.419 # beta in the base profile
 FWHM = 3
 R50 = size_module(b, FWHM)
 A = ellip_module(0,0.4)
-D1, D2 = flex_module(0,0,0,0)
+D1, D2 = flex_module(1,1,-1,1)
+k = 0.1 #kurtosis
 p = lambda x, y: Moffat(x, y, setAlpha(b, R50), b, 1)
 samples = list(metropolis_sampler(p, 100000))
-samples = list( np.matmul(A,np.inner(elem,R50)) + np.matmul(elem[0]*D1,elem)+np.matmul(elem[1]*D2,elem) for elem in samples )# wrong
+samples = list( np.inner(elem,R50) for elem in samples )
+samples = list( np.matmul(A,elem) + np.matmul(elem[0]*D1,elem)+np.matmul(elem[1]*D2,elem) + np.inner(k*np.linalg.norm(elem)**2,elem) for elem in samples )
 print(samples[1])
 unzipped_object = zip(*samples)
 unzipped_sample = list(unzipped_object)
