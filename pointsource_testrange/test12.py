@@ -71,6 +71,7 @@ img -= img.min()
 img /= img.max()
 img *= 255
 cv2.imshow('do not click x', img.astype(np.uint8))
+cv2.imwrite('./ImgBin/CheckSize.bmp', img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 print(img[5:10,5:10])
