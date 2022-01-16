@@ -18,8 +18,8 @@ def main(offL=-0.5, offU=0.5, fwhmL=1.5, fwhmU=6, eL=-0.25, eU=0.25, skL=-0.25, 
 
     np.save("./pointsource_testrange/genNPY/rawparam.npy", NPY)
     NPY[:,9] = np.multiply(NPY[:,9], np.square(NPY[:,2]))
-    NPY[:,3] = np.multiply(NPY[:,3], NPY[:,2])
-    NPY[:,4] = np.multiply(NPY[:,4], NPY[:,2])
+    NPY[:,7] = np.multiply(NPY[:,7], NPY[:,2])
+    NPY[:,8] = np.multiply(NPY[:,8], NPY[:,2])
     NPY[:,5] = np.multiply(NPY[:,5], NPY[:,2])
     NPY[:,6] = np.multiply(NPY[:,6], NPY[:,2])
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
             # offl = input("Please insert a lower-bound value for offset: ")
             # offu = input("Please insert a upper-bound value for offset: ")
             # main(offl, offu, fwhml, fwhmu, el, eu, skl, sku, trl, tru, kl, ku)
-            print("this version hasn't done yet!")
+            print("this version has not done yet!")        
         elif modeForGen=="n":
             main()
     else:
