@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 # This is 1D version
 
 np.random.seed(1000)
-def uniform_proposal(x, delta=12.0):
+def uniform_proposal(x, delta=1):
     return np.random.uniform(x-delta, x+delta)
 
 def metropolis_sampler(p, nsamples, proposal=uniform_proposal):
-    x = 0
+    x = 10
     for i in range(nsamples):
         trial = proposal(x)
         acceptance = p(trial)/p(x)

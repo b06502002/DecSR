@@ -4,6 +4,7 @@ import cv2
 np.random.seed(20220114)
 
 # this script generates parameters for distorting the point source. the parameters are sampled from a hypercube
+# Be extra careful here! Notice that the skewness, triangularity and kurtosis here are in the same unit as FWHM
 
 def main(offL=-0.5, offU=0.5, fwhmL=1.5, fwhmU=6, eL=-0.25, eU=0.25, skL=-0.25, skU=0.25, trL=-0.1, trU=0.1, kL=-0.4, kU=0.4):
     NumOfImg = 100000
@@ -23,7 +24,7 @@ def main(offL=-0.5, offU=0.5, fwhmL=1.5, fwhmU=6, eL=-0.25, eU=0.25, skL=-0.25, 
     NPY[:,5] = np.multiply(NPY[:,5], NPY[:,2])
     NPY[:,6] = np.multiply(NPY[:,6], NPY[:,2])
 
-    np.save("./pointsource_testrange/genNPY/dimLess_param.npy", NPY)
+    # np.save("./pointsource_testrange/genNPY/dimLess_param.npy", NPY)
     return None
 
 
@@ -44,7 +45,14 @@ if __name__ == "__main__":
             # offl = input("Please insert a lower-bound value for offset: ")
             # offu = input("Please insert a upper-bound value for offset: ")
             # main(offl, offu, fwhml, fwhmu, el, eu, skl, sku, trl, tru, kl, ku)
-            print("this version has not done yet!")        
+            print("this version has not done yet!")   
+            # NPY = np.load("./pointsource_testrange/genNPY/rawparam.npy")
+            # NPY[:,9] = np.divide(NPY[:,9], np.square(NPY[:,2]))
+            # NPY[:,7] = np.divide(NPY[:,7], NPY[:,2])
+            # NPY[:,8] = np.divide(NPY[:,8], NPY[:,2])
+            # NPY[:,5] = np.divide(NPY[:,5], NPY[:,2])
+            # NPY[:,6] = np.divide(NPY[:,6], NPY[:,2])
+            # np.save("./pointsource_testrange/genNPY/GenImg_param.npy",NPY)
         elif modeForGen=="n":
             main()
     else:

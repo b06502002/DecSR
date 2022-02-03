@@ -7,7 +7,7 @@ np.random.seed(1234321)
 ## This script mainly checks 
     # centroid offset
 
-def gen_image(b=3.419, FWHM=3, E1=0.31, E2=0.11, F1=2, F2=2, G1=3, G2=2, k=0.1, offset=(-1,-2)):
+def gen_image(b=3.419, FWHM=2, E1=0.2, E2=-0.4, F1=0.03, F2=-0.1, G1=0.1, G2=0.2, k=0.1, offset=(1,2)):
     def uniform_proposal(x, y=0, delta=2.0):
         return np.random.uniform([x-delta,y-delta], [x+delta, y+delta],size=(1,2))
 
